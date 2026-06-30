@@ -44,4 +44,5 @@ chmod 700 "$HOME_DIR/.ssh"
 # Generate host keys if missing (first run)
 ssh-keygen -A
 
+eval "$(ssh-agent -s)"
 exec /usr/sbin/sshd -D -e
