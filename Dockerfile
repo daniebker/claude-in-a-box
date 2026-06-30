@@ -49,6 +49,20 @@ RUN if getent passwd $USER_UID >/dev/null; then \
                                         && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME \
                                             && chmod 0440 /etc/sudoers.d/$USERNAME
 
+# --- Docker CLI ---
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+        | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
+        https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+        > /etc/apt/sources.list.d/docker.list \
+    && apt-get update && apt-get install -y \
+        docker-ce-cli \
+        docker-buildx-plugin \
+        docker-compose-plugin \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd -g 999 docker 2>/dev/null || true \
+    && usermod -aG docker $USERNAME
+
 # --- Doom Emacs ---
 USER $USERNAME
 RUN git clone --depth 1 https://github.com/doomemacs/doomemacs /home/$USERNAME/.config/emacs \
