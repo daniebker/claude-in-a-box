@@ -1,0 +1,17 @@
+services:
+  claude-code-box:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: claude-code-box
+    hostname: claude-code-box
+    ports:
+      - "2222:22"
+    volumes:
+      - ./keys/authorized_keys:/tmp/keys/authorized_keys:ro
+      - ~/.ssh:/tmp/github-keys:ro
+      - dev-home:/home/dev
+    restart: unless-stopped
+
+volumes:
+  dev-home:
