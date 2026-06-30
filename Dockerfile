@@ -18,7 +18,10 @@ RUN apt-get update && apt-get install -y \
                                                 unzip \
                                                     jq \
                                                         gnupg \
-                                                            && rm -rf /var/lib/apt/lists/*
+                                                            emacs \
+                                                                ripgrep \
+                                                                    fd-find \
+                                                                        && rm -rf /var/lib/apt/lists/*
 
 # --- Node.js (required for Claude Code) ---
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
@@ -45,6 +48,12 @@ RUN if getent passwd $USER_UID >/dev/null; then \
                                     && useradd --uid $USER_UID --gid $USER_GID -m -s /bin/bash $USERNAME \
                                         && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME \
                                             && chmod 0440 /etc/sudoers.d/$USERNAME
+
+# --- Doom Emacs ---
+USER $USERNAME
+RUN git clone --depth 1 https://github.com/doomemacs/doomemacs /home/$USERNAME/.config/emacs \
+    && /home/$USERNAME/.config/emacs/bin/doom install --no-fonts -y
+USER root
 
 # --- SSH setup ---
 RUN mkdir -p /var/run/sshd \
