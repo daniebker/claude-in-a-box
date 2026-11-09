@@ -60,7 +60,7 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
         docker-buildx-plugin \
         docker-compose-plugin \
     && rm -rf /var/lib/apt/lists/* \
-    && groupadd -g 999 docker 2>/dev/null || true \
+    && (getent group docker >/dev/null || groupadd --system docker) \
     && usermod -aG docker $USERNAME
 
 # --- Doom Emacs ---

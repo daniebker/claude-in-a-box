@@ -41,6 +41,21 @@ fi
 
 chmod 700 "$HOME_DIR/.ssh"
 
+# --- Docker socket: match the in-container "docker" group to the socket's GID ---
+# The host's docker GID varies (and may collide with an existing group in the
+# image), so it can't be fixed at build time.
+if [ -S /var/run/docker.sock ]; then
+    SOCK_GID="$(stat -c '%g' /var/run/docker.sock)"
+    if [ "$SOCK_GID" != "0" ]; then
+        if getent group "$SOCK_GID" >/dev/null; then
+            usermod -aG "$(getent group "$SOCK_GID" | cut -d: -f1)" "$USERNAME"
+        else
+            groupmod -g "$SOCK_GID" docker
+        fi
+    fi
+    echo "[entrypoint] Docker socket detected (gid $SOCK_GID); $USERNAME can use it."
+fi
+
 # Generate host keys if missing (first run)
 ssh-keygen -A
 
