@@ -66,7 +66,7 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
 # --- Doom Emacs ---
 USER $USERNAME
 RUN git clone --depth 1 https://github.com/doomemacs/doomemacs /home/$USERNAME/.config/emacs \
-    && /home/$USERNAME/.config/emacs/bin/doom install --no-fonts -y
+    && /home/$USERNAME/.config/emacs/bin/doom --force install --no-env
 USER root
 
 # --- SSH setup ---
