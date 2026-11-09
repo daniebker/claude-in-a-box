@@ -63,12 +63,6 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
     && (getent group docker >/dev/null || groupadd --system docker) \
     && usermod -aG docker $USERNAME
 
-# --- Doom Emacs ---
-USER $USERNAME
-RUN git clone --depth 1 https://github.com/doomemacs/doomemacs /home/$USERNAME/.config/emacs \
-    && /home/$USERNAME/.config/emacs/bin/doom --force install --no-env
-USER root
-
 # --- SSH setup ---
 RUN mkdir -p /var/run/sshd \
     && mkdir -p /home/$USERNAME/.ssh \
